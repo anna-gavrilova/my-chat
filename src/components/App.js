@@ -1,103 +1,115 @@
 import React, { Component } from 'react';
 import './App.css';
-import Header from "./header/Header";
 import Login from './login/Login'
-import {BrowserRouter,Link,Route,Switch} from 'react-router-dom';
-import createBrowserHistory from 'history/createBrowserHistory';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-const history=createBrowserHistory();
+import {BrowserRouter,Link,Route,Redirect} from 'react-router-dom';
+import Home from './home/Home';
+import Grid from '@material-ui/core/Grid';
+import UserService from '../services/user.service'
 
 
-const Home =() =>(
-  <div>This is home</div>
-)
+var  axios=require('axios')
+var user=new UserService();
 
-const Nav=()=>(
-  <BrowserRouter history={history}>
-        <div>
-          <ul>
-            <li><Link to="/home">Home</Link></li>
-            <li><Link to="/login">Login</Link></li>
-            <li><Link to="/extra">EXtra</Link></li>
-          <hr/>
-          {/* Route for / condition on logged in and not logged in */}
-          <Route path="/home" render={()=><div>Is this HoMe??7</div>}/>
-          <Route path="/login" component={Login}/>
-          <Route path="/extra" render={()=><div>eXtrA</div>}/>
-          </ul>
-        </div>
-      </BrowserRouter>
-)
 
-class Navigation extends React.Component{
-  render(){
-    return(
-      <BrowserRouter history={history}>
-        <div>
-         
-           {/* Route for / condition on logged in and not logged in */}
-          <Route path="/home" render={()=><div>Is this HoMe??7</div>}/>
-          <Route path="/login" component={Login}/>
-          <Route path="/extra" render={()=><div>eXtrA</div>}/>
-        </div>
-      </BrowserRouter>
-    )
-  }
+
+
+
+function LoginButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Login
+    </button>
+  );
 }
+
+function LogoutButton(props) {
+  return (
+    <button onClick={props.onClick}>
+      Logout
+    </button>
+  );
+}
+
+
+
 
 class App extends Component {
   
   constructor(props){
     super(props);
     this.state={
-      anchorEl: null,
-      loogedUser:null
+      loggeduser:JSON.parse(localStorage.getItem('loggedUser'))
     }
+   
+}
+
+
+homeTemp=(user)=>{
+  return user?<Home user={user}/>:this.loginEl();
 }
 
 
 
-handleClick = event => {
-  this.setState({ anchorEl: event.currentTarget });
-};
+handleLogoutClick=()=>{
+  user.user=null;
+  localStorage.removeItem('loggedUser');
+  this.setState({
+    loggeduser:null
+  })
+}
 
-handleClose = () => {
-  this.setState({ anchorEl: null });
-};
+login=(user)=>{
+  this.setState({loggeduser:user});
+}
+
+loginEl(){
+  return(
+  <Login login={(user)=>this.login(user)}/>
+  )
+}
+
 
   render() {
 
-    const { anchorEl } = this.state;
+    let button;
+    if (this.state.loggeduser) {
+      button = <Link to="/login"><LogoutButton onClick={this.handleLogoutClick} /></Link>;
+    } else {
+      button = <Link to="/login"><LoginButton/></Link>;
+    }
+
 
     return (
-     
+  
+      
       <div className="App">
       
       <BrowserRouter>
-
+     
       <div>
             <div className="menuVisual">
-            <Button
-              aria-owns={anchorEl ? 'simple-menu' : undefined}
-              aria-haspopup="true"
-              onClick={this.handleClick}
-            >
-              Open Menu
-            </Button>
-            <Menu id="simple-menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.handleClose}>
-              <MenuItem onClick={this.handleClose}><Link to="/home">Home</Link></MenuItem>
-              <MenuItem onClick={this.handleClose}><Link to="/login">Login</Link></MenuItem>
-              <MenuItem onClick={this.handleClose}><Link to="/extra">EXtra</Link></MenuItem>
-            </Menu>
+            <Grid container spacing={8}>
+              <Grid item xs={12} sm={3}><Link to="/home">Home</Link></Grid>
+              <Grid item xs={12} sm={3}><Link to="/extra">EXtra</Link></Grid>
+              <Grid item xs={12} sm={3}>
+                  {button}
+              </Grid>
+              <Grid item xs={12} sm={3}></Grid>
+
+            </Grid>
+
             </div>
+
+
+
+
                 {/* Route for / condition on logged in and not logged in */}
-            <div className="routeWindow">
-              <Route path="/home" render={()=><div>Is this HoMe??7</div>}/>
-              <Route path="/login" component={Login}/>
-              <Route path="/extra" render={()=><div>eXtrA</div>}/>
-      </div>
+              <div className="routeWindow">
+                <Route path="/home" render={()=>this.state.loggeduser?this.homeTemp(this.state.loggeduser):this.loginEl()}/>
+                <Route path="/login" render={()=>this.state.loggeduser?this.homeTemp(this.state.loggeduser):this.loginEl()}/>
+                <Route path="/extra" render={()=>this.state.loggeduser?<div>ExTra@@</div>:this.loginEl()}/>
+              
+             </div>
           </div>
         </BrowserRouter>
       </div>
@@ -105,4 +117,4 @@ handleClose = () => {
   }
 }
 
-export {App,Navigation}
+export {App,axios,user}

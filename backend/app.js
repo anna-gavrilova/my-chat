@@ -4,6 +4,8 @@ const app=express();
 const bodyParser = require('body-parser');
 var cors = require('cors');
 const loginRoute=require("./routes/login")
+const userRoute=require('./routes/users')
+const conversationRoute=require('./routes/conversations')
 
 app.use(cors());
 
@@ -22,7 +24,7 @@ mongoose.connect("mongodb://admin:admin1@ds255784.mlab.com:55784/my-chat")
         res.setHeader(
             'Access-Control-Allow-Methods',
             'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-      
+            
         next();
       });
     
@@ -32,6 +34,8 @@ mongoose.connect("mongodb://admin:admin1@ds255784.mlab.com:55784/my-chat")
     }));
 
     app.use("/api/login",loginRoute);
+    app.use("/api/users",userRoute)
+    app.use("/api/dialogs",conversationRoute);
 
     module.exports=app;
 

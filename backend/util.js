@@ -5,7 +5,20 @@ res:function(res,success,mess,data){
         message:mess,
         docs:data
     })
+},
+resError:function(res,err){
+    res.json({
+        success:false,
+        message:err
+    })
+},
+isLoggedIn:function(req){
+    if(req.headers.loggeduser){
+      return true
+    }
+    else return false
 }
+
 
 }
 
