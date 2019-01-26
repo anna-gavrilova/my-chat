@@ -5,10 +5,12 @@ import {BrowserRouter,Link,Route,Redirect} from 'react-router-dom';
 import Home from './home/Home';
 import Grid from '@material-ui/core/Grid';
 import UserService from '../services/user.service'
+import ConvService from '../services/conv.service'
 
 
 var  axios=require('axios')
 var user=new UserService();
+var _conv=new ConvService();
 
 
 
@@ -117,4 +119,4 @@ loginEl(){
   }
 }
 
-export {App,axios,user}
+export {App,axios,user,_conv}

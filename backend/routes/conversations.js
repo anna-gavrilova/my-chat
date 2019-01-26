@@ -29,7 +29,6 @@ router.post("/new",(req,res,next)=>{
 })
 //gets all the conversations this user is a part of
 router.get('/',(req,res,next)=>{
-    console.log(req.headers.loggeduser)
     var id=JSON.parse(req.headers.loggeduser).id
     if(util.isLoggedIn(req)){
         Conversation.find({members:id},(err,convos)=>{

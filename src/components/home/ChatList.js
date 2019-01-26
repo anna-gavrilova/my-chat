@@ -14,11 +14,15 @@ class ChatList extends Component{
 
         UserService.getChats()
         .then(resp=>{
+            console.log(resp.data.docs)
             this.setState({chats:resp.data.docs})
         }).then(_=>{
             this.setState({renderedChats:this.renderChats()})
         })
 
+    }
+
+    componentDidMount(){
     }
 
 
@@ -27,7 +31,7 @@ class ChatList extends Component{
     
         for(var i=0;i<this.state.chats.length;i++){
             var chat=this.state.chats[i];
-            chats.push(<li key={chat.id}>#{chat._id}</li>)
+            chats.push(<li key={chat.id}>#{chat.name}</li>)
         }
         return chats
     }
