@@ -18,7 +18,11 @@ var schemaOptions = {
 const conversationSchema=mongoose.Schema({
     members:[{ type: Schema.Types.ObjectId, ref: 'User' }],
     dateOfCreation:Date,
-    messageHistory:[{ type: Schema.Types.ObjectId, ref: 'Message' }]
+    messageHistory:[{
+      text:String,
+      sender:{ type: Schema.Types.ObjectId, ref: 'User' },
+      time:Date
+  }]
 },schemaOptions);
 
 conversationSchema.virtual('name')
@@ -35,7 +39,7 @@ conversationSchema.pre('find', function(next) {
 
 conversationSchema.pre('findOne', function(next) {
   this.populate('members')
-  rhis.populate('messages');
+  this.populate('messages');
   next();
 })
 

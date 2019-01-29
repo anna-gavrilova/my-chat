@@ -6,6 +6,7 @@ import Home from './home/Home';
 import Grid from '@material-ui/core/Grid';
 import UserService from '../services/user.service'
 import ConvService from '../services/conv.service'
+import Button from '@material-ui/core/Button';
 
 
 var  axios=require('axios')
@@ -14,7 +15,14 @@ var _conv=new ConvService();
 
 
 
-
+const classes = theme => ({
+  button: {
+    margin: theme.spacing.unit,
+  },
+  input: {
+    display: 'none',
+  },
+});
 
 function LoginButton(props) {
   return (
@@ -75,9 +83,14 @@ loginEl(){
 
     let button;
     if (this.state.loggeduser) {
-      button = <Link to="/login"><LogoutButton onClick={this.handleLogoutClick} /></Link>;
+      button =<Link to="/login" className="buttonLink"> <Button variant="contained" color="primary" className={classes.button} onClick={this.handleLogoutClick} >
+                  Logout
+               </Button> 
+               </Link>
     } else {
-      button = <Link to="/login"><LoginButton/></Link>;
+      button =
+                <Link to="/login" className="buttonLink"><Button variant="contained" color="primary" className={classes.button}>Login</Button> </Link>
+                
     }
 
 
@@ -88,15 +101,13 @@ loginEl(){
       
       <BrowserRouter>
      
-      <div>
+      <div className="router">
             <div className="menuVisual">
-            <Grid container spacing={8}>
-              <Grid item xs={12} sm={3}><Link to="/home">Home</Link></Grid>
-              <Grid item xs={12} sm={3}><Link to="/extra">EXtra</Link></Grid>
-              <Grid item xs={12} sm={3}>
-                  {button}
-              </Grid>
-              <Grid item xs={12} sm={3}></Grid>
+            <Grid container spacing={0}>
+
+              <Grid item xs={12} sm={4}><Link to="/home"><Button variant="contained" color="primary" className={classes.button}>Home</Button> </Link></Grid>
+              <Grid item xs={12} sm={4}><Link to="/extra"><Button variant="contained" color="primary" className={classes.button}>Extra</Button> </Link></Grid>
+              <Grid item xs={12} sm={4}>{button} </Grid>
 
             </Grid>
 
@@ -112,7 +123,7 @@ loginEl(){
                 <Route path="/extra" render={()=>this.state.loggeduser?<div>ExTra@@</div>:this.loginEl()}/>
               
              </div>
-          </div>
+        </div>
         </BrowserRouter>
       </div>
     );

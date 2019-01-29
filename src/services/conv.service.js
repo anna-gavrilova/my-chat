@@ -9,13 +9,20 @@ class ConvService {
     }
 
   
-    sendMessage=(message)=>{
-        return axios.post("http://127.0.0.1:5000/api/dialogs",message)
+    sendMessage=(msg,dialog)=>{
+        var body={
+            message:msg,
+            dialog:dialog
+        }
+        //body contains the message itself and the chat id
+        return axios.post("http://127.0.0.1:5000/api/dialogs",body)
     }
-    //gets chat sfor the specific user
+    //gets chats for the specific user
     getChats=()=>{
         return axios.get("http://127.0.0.1:5000/api/dialogs/")
     }
+
+
     
 
 

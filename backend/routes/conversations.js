@@ -3,7 +3,10 @@ const router=express.Router();
 const util=require("./../util")
 const User=require('../models/user')
 const Conversation=require('../models/conversation')
-
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr('myTotalySecretKey');
+var http=require('http');
+const io=require('socket.io')()
 //Create new conversation
 router.post("/new",(req,res,next)=>{
     
@@ -29,7 +32,7 @@ router.post("/new",(req,res,next)=>{
 })
 //gets all the conversations this user is a part of
 router.get('/',(req,res,next)=>{
-    var id=JSON.parse(req.headers.loggeduser).id
+    var id=JSON.parse(req.headers.loggeduser)
     if(util.isLoggedIn(req)){
         Conversation.find({members:id},(err,convos)=>{
             if(err){
@@ -45,5 +48,44 @@ router.get('/',(req,res,next)=>{
         util.res(res,false,"You're not logged in")
     }
 })
+
+//send message to a chat
+router.post('/',(req,res,next)=>{
+    if(util.isLoggedIn(req)){
+        Conversation.findById(req.body.dialog,(err,dialog)=>{
+            if(err){
+                util.resError(res,err.message)
+            }
+            else{
+                dialog.messageHistory.push(
+                    {
+                        text:req.body.message,
+                        sender:req.headers.loggeduser,
+                        time:new Date()
+                    }
+                )
+                dialog.save((err,d)=>{
+                    if(err){
+                        util.resError(res,err)
+                    }
+                    else{
+                        util.res(res,true,"Message was sent",d)
+                    }
+                })
+            }
+        })
+    }   
+     else{
+        util.res(res,false,"You're not logged in")
+    }
+})
+
+// io.on('connection',client=>{
+//     console.log("New client connected")
+//         client.on('message',(msg)=>{
+//             console.log('on message from server',msg)
+//         });
+// })
+
 
 module.exports=router;
