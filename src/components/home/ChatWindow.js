@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import {socket} from '../App'
 import openSocket from "socket.io-client"
 import './Home.css'
 import {_conv as ConvService} from '../App';
@@ -9,9 +10,10 @@ class ChatList extends Component{
     constructor(props){
         super(props);
         this.state={
-            newMessage:''
+            newMessage:'',
+            activeChat:this.props.selectedChat
         }
-        this.socket=openSocket('http://localhost:8000');
+        
         this.enterRoom=this.enterRoom.bind(this)
 
     }
@@ -27,13 +29,14 @@ class ChatList extends Component{
 
     enterRoom(){
         const id=this.props.selectedChat;
-        console.log("id",id)
-        this.socket.emit('enter',id)
-        this.socket.on('entered',(resp)=>{
+        socket.emit('enter',id)
+        socket.on('entered',(resp)=>{
             this.setState({
                 selectedChat:id
             })
         })
+        //retrieve message history
+
     }
 
     sendClick=(e)=>{
@@ -43,7 +46,7 @@ class ChatList extends Component{
                 this.setState({
                     newMessage:''
                 });
-                console.log("Message was sent!(from a client)");
+                console.log(response);
             })
 
         

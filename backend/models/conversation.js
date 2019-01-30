@@ -39,8 +39,13 @@ conversationSchema.pre('find', function(next) {
 
 conversationSchema.pre('findOne', function(next) {
   this.populate('members')
-  this.populate('messages');
+  //this.populate('messageHistory');
   next();
 })
+// conversationSchema.pre('findById', function(next) {
+//   this.populate('members')
+//   this.populate('messageHistory');
+//   next();
+// })
 
 module.exports=mongoose.model("Conversation",conversationSchema)

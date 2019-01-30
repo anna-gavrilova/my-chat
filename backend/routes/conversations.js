@@ -53,14 +53,14 @@ router.get('/',(req,res,next)=>{
 router.post('/',(req,res,next)=>{
     if(util.isLoggedIn(req)){
         Conversation.findById(req.body.dialog,(err,dialog)=>{
-            if(err){
-                util.resError(res,err.message)
+            if(err||!dialog){
+                util.resError(res,err)
             }
             else{
                 dialog.messageHistory.push(
                     {
                         text:req.body.message,
-                        sender:req.headers.loggeduser,
+                        sender:req.headers.loggeduser.id,
                         time:new Date()
                     }
                 )
@@ -78,6 +78,18 @@ router.post('/',(req,res,next)=>{
      else{
         util.res(res,false,"You're not logged in")
     }
+})
+
+router.get('/:id',(req,res,next)=>{
+    Conversation.findById(req.params.id,(err,dialog)=>{
+
+        if(err){
+            util.resError(res,err)
+        }
+        else{
+            util.res(res,true,"Messages were rerieved(from api)",dialog.messageHistory)
+        }
+    })
 })
 
 // io.on('connection',client=>{

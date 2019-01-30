@@ -22,6 +22,10 @@ class ConvService {
         return axios.get("http://127.0.0.1:5000/api/dialogs/")
     }
 
+    retrieveMessages=(chat)=>{
+        return axios.get('http://127.0.0.1:5000/api/dialogs/'+chat)
+    }
+
 
     
 

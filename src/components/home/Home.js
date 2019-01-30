@@ -3,6 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import ChatList from './ChatList'
 import ChatWindow from './ChatWindow'
 import './Home.css';
+import {_conv as ConvService} from '../App'
 
 class Home extends Component{
 
@@ -23,9 +24,15 @@ class Home extends Component{
         this.setState({
             selectedChat:id
         })
-        console.log("State of a parent is changed to",id);
 
+        console.log('I might be here or nor',this.state.selectedChat)
+        ConvService.retrieveMessages(this.state.selectedChat)
+        .then(messages=>{
+            console.log(messages)
+        })
     }
+
+
 
 
     render(){

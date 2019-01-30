@@ -7,11 +7,13 @@ import Grid from '@material-ui/core/Grid';
 import UserService from '../services/user.service'
 import ConvService from '../services/conv.service'
 import Button from '@material-ui/core/Button';
+import openSocket from "socket.io-client"
 
 
 var  axios=require('axios')
 var user=new UserService();
 var _conv=new ConvService();
+var socket=openSocket('http://localhost:8000');
 
 
 
@@ -130,4 +132,4 @@ loginEl(){
   }
 }
 
-export {App,axios,user,_conv}
+export {App,axios,user,_conv,socket}
