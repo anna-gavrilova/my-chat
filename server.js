@@ -11,13 +11,19 @@ io.on('connection',client=>{
     console.log("New client connected")
 
     client.on('message',data=>{
-        console.log("from server",data)
+        io.sockets.in(data.room).emit('message', data);
     });
 
     client.on('enter',roomid=>{
         console.log(roomid)
         client.emit('entered','I just sent somthing back');
     });
+
+    client.on('goOnline',data=>{
+        client.join(data.room)
+        console.log(data.user+" is active for chat "+data.room)
+    })
+
 })
 
 io.listen(8000)

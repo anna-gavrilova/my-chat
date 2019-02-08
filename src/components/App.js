@@ -3,6 +3,7 @@ import './App.css';
 import Login from './login/Login'
 import {BrowserRouter,Link,Route,Redirect} from 'react-router-dom';
 import Home from './home/Home';
+import Search from './search/Search'
 import Grid from '@material-ui/core/Grid';
 import UserService from '../services/user.service'
 import ConvService from '../services/conv.service'
@@ -52,6 +53,7 @@ class App extends Component {
     this.state={
       loggeduser:JSON.parse(localStorage.getItem('loggedUser'))
     }
+
    
 }
 
@@ -60,7 +62,9 @@ homeTemp=(user)=>{
   return user?<Home user={user}/>:this.loginEl();
 }
 
-
+search=(user)=>{
+  return user?<Search user={user}/>:this.loginEl();
+}
 
 handleLogoutClick=()=>{
   user.user=null;
@@ -107,8 +111,8 @@ loginEl(){
             <div className="menuVisual">
             <Grid container spacing={0}>
 
-              <Grid item xs={12} sm={4}><Link to="/home"><Button variant="contained" color="primary" className={classes.button}>Home</Button> </Link></Grid>
-              <Grid item xs={12} sm={4}><Link to="/extra"><Button variant="contained" color="primary" className={classes.button}>Extra</Button> </Link></Grid>
+              <Grid item xs={12} sm={4}><Link to="/"><Button variant="contained" color="primary" className={classes.button}>Home</Button> </Link></Grid>
+              <Grid item xs={12} sm={4}><Link to="/search"><Button variant="contained" color="primary" className={classes.button}>Find</Button> </Link></Grid>
               <Grid item xs={12} sm={4}>{button} </Grid>
 
             </Grid>
@@ -120,9 +124,10 @@ loginEl(){
 
                 {/* Route for / condition on logged in and not logged in */}
               <div className="routeWindow">
-                <Route path="/home" render={()=>this.state.loggeduser?this.homeTemp(this.state.loggeduser):this.loginEl()}/>
-                <Route path="/login" render={()=>this.state.loggeduser?this.homeTemp(this.state.loggeduser):this.loginEl()}/>
-                <Route path="/extra" render={()=>this.state.loggeduser?<div>ExTra@@</div>:this.loginEl()}/>
+                <Route exact path="/" render={()=>this.homeTemp(this.state.loggeduser)}/>
+                <Route path="/login" render={()=>this.homeTemp(this.state.loggeduser)}/>
+                <Route path="/search" render={()=>this.search(this.state.loggeduser)}/>
+                <Redirect from="/*" to="/" />
               
              </div>
         </div>

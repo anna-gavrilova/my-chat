@@ -14,8 +14,10 @@ class ChatList extends Component{
         super(props);
         this.state={
             chats:null,
-            renderedChats:[]
+            renderedChats:[],
+            selectedChat:this.props.selectedChat
         };
+
     }
 
 
@@ -23,46 +25,36 @@ class ChatList extends Component{
 
     
     componentWillMount(){
-        console.log("component will mount")
         UserService.getChats()
         .then(resp=>{
             this.setState({chats:resp.data.docs})
+            this.props.subscribeRooms(resp.data.docs)
         }).then(_=>{
             this.setState({renderedChats:this.renderChats()})
         })
 
     }
 
-    componentDidMount(){
+    handleclick=(e,chat)=>{
+        
+        this.props.selectChat(chat.id);
+        this.setState({renderedChats:this.renderChats(chat.id)})
+       
+        
     }
 
-    chatClick(chatid){
-        console.log("i clicked a chat name",chatid)
-        this.props.selectChat(chatid);
- 
-    }
 
-
-    renderChats(){
+    renderChats(selected){
         var chats=[];
         chats= this.state.chats.map((chat)=>{
-            return   <div  key={chat.id} chat={chat.id} onClick={()=>this.chatClick(chat.id)}>
+            console.log(this.props.selectedChat)
+            return   <div  key={chat.id} chat={chat.id} className={selected==chat.id?'selected':'not-selected'} onClick={(e)=>this.handleclick(e,chat)}>
             <ListItem  button>
-                <ListItemText primary={chat.id}/>
+                <ListItemText primary={chat.name}/>
             </ListItem>
             </div>
         })
         console.log(chats)
-        // for(var i=0;i<this.state.chats.length;i++){
-        //     var chat=this.state.chats[i];
-        //     chats.push(
-        //         <div  key={chat.id} chat={chat.id} onClick={()=>this.props.selectChat(chat.id)}>
-        //         <ListItem  button>
-        //             <ListItemText primary={chat.id}/>
-        //         </ListItem>
-        //         </div>
-        //         )
-        // }
         return chats
     }
 

@@ -60,7 +60,7 @@ router.post('/',(req,res,next)=>{
                 dialog.messageHistory.push(
                     {
                         text:req.body.message,
-                        sender:req.headers.loggeduser.id,
+                        sender:JSON.parse(req.headers.loggeduser).id,
                         time:new Date()
                     }
                 )
@@ -91,13 +91,6 @@ router.get('/:id',(req,res,next)=>{
         }
     })
 })
-
-// io.on('connection',client=>{
-//     console.log("New client connected")
-//         client.on('message',(msg)=>{
-//             console.log('on message from server',msg)
-//         });
-// })
 
 
 module.exports=router;

@@ -4,6 +4,8 @@ import ChatList from './ChatList'
 import ChatWindow from './ChatWindow'
 import './Home.css';
 import {_conv as ConvService} from '../App'
+import {socket} from '../App'
+const _=require('underscore')
 
 class Home extends Component{
 
@@ -11,10 +13,23 @@ class Home extends Component{
         super(props);
         this.state={
             user:this.props.user,
-            selectedChat:null
+            selectedChat:null,
+            chatHistory:null,
+            newmessages:null,
+            newmessagetrigger:true
         }
 
         this.selectChat=this.selectChat.bind(this)
+        this.subscribeRooms=this.subscribeRooms.bind(this)
+        this.getMessages=this.getMessages.bind(this)
+
+        socket.on('message',messageData=>{
+            if(this.state.selectedChat===messageData.room){
+                this.getMessages(messageData.room)
+            }
+        
+        })
+
     }
 
  
@@ -25,10 +40,21 @@ class Home extends Component{
             selectedChat:id
         })
 
-        console.log('I might be here or nor',this.state.selectedChat)
-        ConvService.retrieveMessages(this.state.selectedChat)
+        this.getMessages(id)
+    }
+
+    getMessages(id){
+        ConvService.retrieveMessages(id)
         .then(messages=>{
-            console.log(messages)
+            this.setState({
+                chatHistory:messages.data.docs
+            })
+        })
+    }
+
+    subscribeRooms(rooms){
+        _.pluck(rooms,"id").forEach(room=>{
+            socket.emit('goOnline',{user:this.state.user.id,room:room})
         })
     }
 
@@ -36,11 +62,15 @@ class Home extends Component{
 
 
     render(){
+        var isChatSelected=this.state.selectedChat?
+        <Grid item xs={12} sm={9} className='wrap'><ChatWindow selectedChat={this.state.selectedChat} chatHistory={this.state.chatHistory} user={this.props.user} newmessages={this.state.newmessages}/></Grid>:
+        <div className="noInfo">Select chat from the left</div>
         return(
             <div className="homeWrapper">
-                 <Grid container spacing={0}>
-                    <Grid item xs={12} sm={3}><ChatList selectChat={this.selectChat}/></Grid>
-                    <Grid item xs={12} sm={9}><ChatWindow selectedChat={this.state.selectedChat}/></Grid>
+                 <Grid container spacing={0} className='wrap'>
+                    <Grid item xs={12} sm={3}><ChatList selectChat={this.selectChat} selectedChat={this.state.selectedChat} subscribeRooms={this.subscribeRooms}/></Grid>
+                    {isChatSelected}
+                    
                 </Grid>
             </div>
         );

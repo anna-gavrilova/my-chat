@@ -19,3 +19,31 @@ input[type=text] {
     -webkit-border-radius: 5px;
     border-radius: 5px;
 }
+
+.message{
+    border:1px solid purple;
+}
+
+.myMessage{
+    text-align: right
+}
+
+.wrap{
+    height: 100%
+}
+
+.theirMessage{
+    text-align: left
+}
+
+.selected{
+    border:1px solid black
+}
+
+
+.messageHistory{
+    padding: 20px;
+    height:80%;
+    overflow-y:scroll;
+    
+}

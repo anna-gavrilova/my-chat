@@ -23,7 +23,6 @@ class Login extends Component {
             email:this.state.uname,
             password:this.state.pass
         }
-        console.log(body);
         this.auth.login(body)
             .then((resp)=>{
                 if(resp.data.success){

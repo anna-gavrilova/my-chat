@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {socket} from '../App'
-import openSocket from "socket.io-client"
+import io from "socket.io-client"
 import './Home.css'
 import {_conv as ConvService} from '../App';
 
@@ -11,10 +11,14 @@ class ChatList extends Component{
         super(props);
         this.state={
             newMessage:'',
-            activeChat:this.props.selectedChat
+            chatHistory:this.props.chatHistory,
+            newmessages:[],
+            newmessagetrigger:true
         }
         
-        this.enterRoom=this.enterRoom.bind(this)
+        this.renderHistory=this.renderHistory.bind(this)
+      
+
 
     }
 
@@ -22,48 +26,61 @@ class ChatList extends Component{
     }
 
     componentWillMount(){
-        //enter the room
-        this.enterRoom();
-        //get the chat history
     }
 
     enterRoom(){
-        const id=this.props.selectedChat;
-        socket.emit('enter',id)
-        socket.on('entered',(resp)=>{
-            this.setState({
-                selectedChat:id
-            })
-        })
-        //retrieve message history
 
     }
 
+    renderHistory(){
+        var messages=[];
+       if(this.props.chatHistory){
+            messages=this.props.chatHistory.slice().map(message=>{
+                return <div className={message.sender?(message.sender.id==this.props.user.id?'myMessage':'theirMessage'):''} key={message._id}>{message.sender?message.sender.name:'anonymous'}:{message.text}</div>
+            });
+       }
+       return messages.length?messages:<div className="empty">This chat is empty</div>;
+    }
+
+
     sendClick=(e)=>{
-        this.socket.emit('message',this.state.newMessage)
+        
         ConvService.sendMessage(this.state.newMessage,this.props.selectedChat)
             .then(response=>{
                 this.setState({
                     newMessage:''
                 });
-                console.log(response);
             })
+            .then(_=>{
+                socket.emit('message',{room:this.props.selectedChat,sender:this.props.user})
+            })
+     }
 
+     typing=(event)=>{
+        this.setState({newMessage:event.target.value})
         
+     }
 
-    }
+     keyDown=(e)=>{
+        if (e.keyCode == 13 ) {
+            this.sendClick(e)
+        }
+     }
+
     
 
     render(){
         return(
-            <div className="chatWindow">
+            <div className="chatWindow wrap">
                 <ul className="messageHistory">
-                    <div>{this.props.selectedChat}</div>
+                    <div>
+                        {this.renderHistory()}
+                    </div>
 
                 </ul>
                 <div className="inputBox">
-                    <input type="text" value={this.state.newMessage} onChange={(event) => this.setState({newMessage:event.target.value})}></input>
-                    <button onClick={(event) => this.sendClick(event)}>Send!</button>
+                    <input type="text" value={this.state.newMessage} onChange={(event) => this.typing(event)} onKeyDown={this.keyDown}></input>
+                    <button type='submit' onClick={(event) => this.sendClick(event)}>Send!</button>
                 </div>
                 
             </div>
