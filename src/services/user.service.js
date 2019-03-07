@@ -21,15 +21,15 @@ class UserService {
     }
 
     getAllUsers=()=>{
-        return axios.get("http://127.0.0.1:5000/api/users")
+        return axios.get("http://127.0.0.1:3030/api/users")
     }
 
     getChats=()=>{
-        return axios.get("http://127.0.0.1:5000/api/dialogs/")
+        return axios.get("http://127.0.0.1:3030/api/dialogs/")
     }
 
     findUsers=(text)=>{
-        return axios.post("http://127.0.0.1:5000/api/users/find",{pattern:text})
+        return axios.post("http://127.0.0.1:3030/api/users/find",{pattern:text})
     }
     
 

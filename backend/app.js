@@ -6,6 +6,7 @@ var cors = require('cors');
 const loginRoute=require("./routes/login")
 const userRoute=require('./routes/users')
 const conversationRoute=require('./routes/conversations')
+const path = require('path');
 
 app.use(cors());
 
@@ -36,6 +37,9 @@ mongoose.connect("mongodb://admin:admin1@ds255784.mlab.com:55784/my-chat")
     app.use("/api/login",loginRoute);
     app.use("/api/users",userRoute)
     app.use("/api/dialogs",conversationRoute);
-
+    app.use(express.static(path.join(__dirname,'build')))
+    app.get('*',(req,res)=>{
+        res.sendFile(path.join(__dirname,'build/index.html'))
+    })
     module.exports=app;
 

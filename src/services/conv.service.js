@@ -18,15 +18,15 @@ class ConvService {
             dialog:dialog
         }
         //body contains the message itself and the chat id
-        return axios.post("http://127.0.0.1:5000/api/dialogs",body)
+        return axios.post("http://127.0.0.1:3030/api/dialogs",body)
     }
     //gets chats for the specific user
     getChats=()=>{
-        return axios.get("http://127.0.0.1:5000/api/dialogs/")
+        return axios.get("http://127.0.0.1:3030/api/dialogs/")
     }
 
     retrieveMessages=(chat)=>{
-        return axios.get('http://127.0.0.1:5000/api/dialogs/'+chat)
+        return axios.get('http://127.0.0.1:3030/api/dialogs/'+chat)
     }
 
     startChat=(user,startWith)=>{
@@ -34,7 +34,7 @@ class ConvService {
             loggeduser:user,
             startWithId:startWith
         }
-        return axios.post('http://127.0.0.1:5000/api/dialogs/new',body)
+        return axios.post('http://127.0.0.1:3030/api/dialogs/new',body)
     }
 
 
