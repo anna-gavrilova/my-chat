@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Auth} from '../../services/auth.service';
-import {user as UserService} from '../App'
+import {_user as UserService} from '../App'
 import {axios} from '../App';
  
 class Login extends Component {
@@ -26,9 +26,8 @@ class Login extends Component {
         this.auth.login(body)
             .then((resp)=>{
                 if(resp.data.success){
+                    console.log(resp.data.docs)
                     localStorage.setItem("loggedUser",JSON.stringify(resp.data.docs));
-                    axios.defaults.headers.common['loggeduser'] = JSON.stringify(resp.data.docs) // for all requests
-                    UserService.setUser(resp.data.docs);
                     that.props.login(resp.data.docs);
                     console.log("User logged in")
 

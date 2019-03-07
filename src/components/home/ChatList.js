@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {user as UserService} from '../App'
+import {_user as UserService} from '../App'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';

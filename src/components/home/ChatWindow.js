@@ -13,16 +13,27 @@ class ChatList extends Component{
             newMessage:'',
             chatHistory:this.props.chatHistory,
             newmessages:[],
-            newmessagetrigger:true
+            newmessagetrigger:true,
+            isTyping:false
         }
         
         this.renderHistory=this.renderHistory.bind(this)
       
+        socket.on('typing',data=>{
+            if(data.sender.id!==this.props.user.id){
+                this.setState({isTyping:true})
+                setTimeout(()=>{
+                    this.setState({isTyping:false})
+                },8000)
+            }
+
+        })
 
 
     }
 
     componentDidMount(){
+       
     }
 
     componentWillMount(){
@@ -31,6 +42,7 @@ class ChatList extends Component{
     enterRoom(){
 
     }
+
 
     renderHistory(){
         var messages=[];
@@ -58,6 +70,7 @@ class ChatList extends Component{
 
      typing=(event)=>{
         this.setState({newMessage:event.target.value})
+        socket.emit('typing',{room:this.props.selectedChat,sender:this.props.user})
         
      }
 
@@ -70,14 +83,17 @@ class ChatList extends Component{
     
 
     render(){
+        
         return(
             <div className="chatWindow wrap">
                 <ul className="messageHistory">
+                room is {this.props.selectedChat}
                     <div>
                         {this.renderHistory()}
                     </div>
 
                 </ul>
+                <div className="userTyping">{this.state.isTyping?"typing":''}</div>
                 <div className="inputBox">
                     <input type="text" value={this.state.newMessage} onChange={(event) => this.typing(event)} onKeyDown={this.keyDown}></input>
                     <button type='submit' onClick={(event) => this.sendClick(event)}>Send!</button>

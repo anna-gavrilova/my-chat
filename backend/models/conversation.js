@@ -43,4 +43,8 @@ conversationSchema.pre('findOne', function(next) {
   next();
 })
 
+conversationSchema.post('save',function(doc){
+  this.populate('members')
+})
+
 module.exports=mongoose.model("Conversation",conversationSchema)

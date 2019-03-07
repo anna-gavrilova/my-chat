@@ -39,18 +39,23 @@ userSchema.statics.new=function(newUser,callback){
     });
 }
 
+
+
 userSchema.statics.login=function (_email,pass,callback){
 
-    return this.findOne({email:_email},(err,user)=>{
+    return this.findOne({email:_email}).exec((err,user)=>{
         if(err||!user){
             callback(err,null);
         }
         else{
             bcrypt.compare(pass, user.password, function(err, res) {
                 if(err || !res) callback(err,null)
-                else if (res)
-                    callback(err, user);
                 
+                else if (res) {
+                    user=user.toObject()
+                    delete user.password;
+                    callback(err, user);
+                }
             });
         }
     })

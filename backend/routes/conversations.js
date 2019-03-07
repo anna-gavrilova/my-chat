@@ -7,22 +7,36 @@ const Cryptr = require('cryptr');
 const cryptr = new Cryptr('myTotalySecretKey');
 var http=require('http');
 const io=require('socket.io')()
+const _=require('underscore')
+
 //Create new conversation
 router.post("/new",(req,res,next)=>{
     
 
     const newConvo=new Conversation({
-        members:[req.body.loggeduser],
+        members:[req.body.loggeduser,req.body.startWithId],
         dateOfCreation: new Date(),
         messageHistory:[]
     });
+    var id=JSON.parse(req.headers.loggeduser)
     if(util.isLoggedIn(req)){
-        newConvo.save(newConvo,(err,convo)=>{
-            if(err){
-                util.resError(res,err)
+        Conversation.find({members:[id,req.body.startWithId]},(err,conv)=>{
+            if(conv.length){
+                util.res(res,false,'Conversation already exists',conv)
+                
             }
             else{
-                util.res(res,true,"Empty conversation was created",convo)
+                newConvo.save(newConvo,(err,convo)=>{
+                    if(err){
+                        util.resError(res,err)
+                    }
+                    else{
+                        Conversation.populate(convo,{path:'members'},(err,convo)=>{
+                            util.res(res,true,"Empty conversation was created",convo)
+                        })
+                        
+                    }
+                })
             }
         })
     }else{

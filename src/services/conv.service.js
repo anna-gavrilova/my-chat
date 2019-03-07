@@ -8,9 +8,12 @@ class ConvService {
 
     }
 
-  
+    selectConversation=(conv)=>{
+        this.openConversation=conv
+    }
+
     sendMessage=(msg,dialog)=>{
-        var body={
+        let body={
             message:msg,
             dialog:dialog
         }
@@ -24,6 +27,14 @@ class ConvService {
 
     retrieveMessages=(chat)=>{
         return axios.get('http://127.0.0.1:5000/api/dialogs/'+chat)
+    }
+
+    startChat=(user,startWith)=>{
+        let body={
+            loggeduser:user,
+            startWithId:startWith
+        }
+        return axios.post('http://127.0.0.1:5000/api/dialogs/new',body)
     }
 
 

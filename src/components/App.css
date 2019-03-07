@@ -40,15 +40,23 @@
   background:lightpink;
 }
 
-.buttonLink{
+.menuBtn{
   text-decoration:none;
+  flex-shrink: 2
 }
 .router{
   height:100%;
   border-radius: 10px;
+  min-width: 600px;
 }
 .menuVisual{
   height:5%;
+  width:100%;
+  min-width: 600px;
+  margin-bottom:5%;
+}
+.menuContainer{
+  flex-wrap: nowrap !important;
 }
 
 .routeWindow{
