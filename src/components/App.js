@@ -9,6 +9,7 @@ import UserService from '../services/user.service'
 import ConvService from '../services/conv.service'
 import Button from '@material-ui/core/Button';
 import openSocket from "socket.io-client"
+import io from 'socket.io-client';
 
 
 
@@ -16,7 +17,7 @@ import openSocket from "socket.io-client"
 var  axios=require('axios')
 var _user=new UserService();
 var _conv=new ConvService();
-var socket;
+var socket=io('http://localhost:8000');
 
 
 
@@ -29,17 +30,15 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state={
-      loggeduser:JSON.parse(localStorage.getItem('loggedUser'))
+      loggeduser:JSON.parse(localStorage.getItem('loggedUser')),
+      apiresult:null,
+      roomapi:null
     }
 
     this.handleLogoutClick=this.handleLogoutClick.bind(this)
     this.logout=this.logout.bind(this)
 
-    if(localStorage.getItem('loggedUser')){
-      socket=openSocket('http://localhost:8000',{
-        forceNew:false
-      })
-    }
+
 
     window.addEventListener('storage', event=>{
       if (event.key == 'logout-event') { 
@@ -50,9 +49,7 @@ class App extends Component {
         _user.setUser(JSON.parse(localStorage.getItem('loggedUser')));
         this.setState({loggeduser:JSON.parse(localStorage.getItem('loggedUser'))},()=>{
 
-          socket=openSocket('http://localhost:8000',{
-            forceNew:false
-          })
+          socket.connect()
         })
       }
   });
@@ -60,9 +57,72 @@ class App extends Component {
    
 }
 
+componentWillMount(){
+  if(localStorage.getItem('loggedUser')){
+    socket.connect()
+  }
+}
+
 
 homeTemp=(user,chat)=>{
   return user?<Home user={user} chatSelected={chat}/>:this.loginEl();
+}
+
+api=(user)=>{
+  return !user?this.loginEl():
+  <div className="Api_calls">
+
+    <Button variant="contained" color="primary" className='menuBtn' onClick={this.getlog}> Get log</Button> <br/>
+    <Button variant="contained" color="primary" className='menuBtn' onClick={this.getallhistory}> Get All History</Button> <br/>
+    <input type='text' placeholder="room id" onChange={(event)=>this.setState({roomapi:event.target.value})}></input>
+    <Button variant="contained" color="primary" className='menuBtn' onClick={this.getroomhistory}> Get Room History</Button> 
+
+    <div className="apiResult">
+      {this.state.apiresult}
+    </div>
+  </div>
+}
+getroomhistory=()=>{
+  if(this.state.roomapi){
+    _conv.getroomhistory(this.state.roomapi)
+      .then(resp=>{
+        console.log(resp.data.data)
+        if(resp.data.success){
+          this.setState({
+            apiresult:JSON.stringify(resp.data.data)
+          })
+
+        }
+        else{
+          this.setState({
+            apiresult:'room not found'
+          })
+        }
+      })
+  }
+  else{
+    this.setState({
+      apiresult:'room name is empty'
+    })
+  }
+}
+
+getallhistory=()=>{
+  _conv.gethistory()
+    .then(resp=>{
+      this.setState({
+        apiresult:JSON.stringify(resp.data)
+      })
+    })
+}
+
+getlog=()=>{
+  _conv.getlog()
+    .then(resp=>{
+      this.setState({
+        apiresult:JSON.stringify(resp.data)
+      })
+    })
 }
 
 search=(user)=>{
@@ -93,9 +153,7 @@ login=(user)=>{
   axios.defaults.headers.common['loggeduser'] = JSON.stringify(user) // for all requests
   _user.setUser(user);
   this.setState({loggeduser:user},()=>{
-    socket=openSocket('http://localhost:8000',{
-      forceNew:false
-    })
+    socket.connect()
   });
   
 }
@@ -135,6 +193,7 @@ loginEl(){
 
               <Grid item xs={12} sm={4} className='menuBtn'><Link to="/"><Button variant="contained" color="primary" >Home</Button> </Link></Grid>
               <Grid item xs={12} sm={4} className='menuBtn'><Link to="/search"><Button variant="contained" color="primary" >Find</Button> </Link></Grid>
+              <Grid item xs={12} sm={4} className='menuBtn'><Link to="/api"><Button variant="contained" color="primary" >API</Button> </Link></Grid>
               <Grid item xs={12} sm={4} className='menuBtn'>{button} </Grid>
 
             </Grid>
@@ -149,6 +208,7 @@ loginEl(){
                 <Route exact path="/" render={()=>this.homeTemp(this.state.loggeduser)}/>
                 <Route path="/login" render={()=>this.homeTemp(this.state.loggeduser)}/>
                 <Route path="/search" render={()=>this.search(this.state.loggeduser)}/>
+                <Route path="/api" render={()=>this.api(this.state.loggeduser)}/>
                 <Redirect from="/*" to="/" />
               
              </Switch>

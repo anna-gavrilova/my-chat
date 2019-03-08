@@ -5,6 +5,7 @@ import ChatWindow from './ChatWindow'
 import './Home.css';
 import {_conv as ConvService} from '../App'
 import {socket} from '../App'
+import openSocket from "socket.io-client"
 const _=require('underscore')
 
 class Home extends Component{
@@ -25,7 +26,11 @@ class Home extends Component{
         this.subscribeRooms=this.subscribeRooms.bind(this)
         this.getMessages=this.getMessages.bind(this)
 
-       
+       console.log(socket)
+       if(socket.disconnected){
+           socket.connect()
+       }
+       console.log(socket.disconnected)
         socket.on('message',messageData=>{
             if(this.state.selectedChat==messageData.room){
                 this.getMessages(messageData.room)

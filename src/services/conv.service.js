@@ -37,6 +37,17 @@ class ConvService {
         return axios.post('http://127.0.0.1:3030/api/dialogs/new',body)
     }
 
+    getlog=()=>{
+        return axios.get('http://127.0.0.1:3030/api/eventlog')
+    }
+
+    gethistory=()=>{
+        return axios.get('http://127.0.0.1:3030/api/history')
+    }
+    getroomhistory=(room)=>{
+        return axios.post('http://127.0.0.1:3030/api/roomhistory',{room:room})
+    }
+
 
     
 

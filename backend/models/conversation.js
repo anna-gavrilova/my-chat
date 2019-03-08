@@ -33,7 +33,7 @@ conversationSchema.virtual('name')
 
 conversationSchema.pre('find', function(next) {
   this.populate('members');
-  this.populate('messageHistory')
+  this.populate('messageHistory.sender')
   next();
 })
 
