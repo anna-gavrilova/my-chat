@@ -10,6 +10,22 @@ import ConvService from '../services/conv.service'
 import Button from '@material-ui/core/Button';
 import openSocket from "socket.io-client"
 import io from 'socket.io-client';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import Admin from './admin/Admin';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+import IconButton from '@material-ui/core/IconButton';
+import FirstPageIcon from '@material-ui/icons/FirstPage';
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
+import LastPageIcon from '@material-ui/icons/LastPage';
 
 
 
@@ -68,20 +84,28 @@ homeTemp=(user,chat)=>{
   return user?<Home user={user} chatSelected={chat}/>:this.loginEl();
 }
 
+// api=(user)=>{
+//   return !user?this.loginEl():
+//   <div className="Api_calls">
+
+//     <Button variant="contained" color="primary" className='menuBtn' onClick={this.getlog}> Get log</Button> <br/>
+//     <Button variant="contained" color="primary" className='menuBtn' onClick={this.getallhistory}> Get All History</Button> <br/>
+//     <input type='text' placeholder="room id" onChange={(event)=>this.setState({roomapi:event.target.value})}></input>
+//     <Button variant="contained" color="primary" className='menuBtn' onClick={this.getroomhistory}> Get Room History</Button> 
+
+//     <div className="apiResult">
+//       {this.state.apiresult}
+//     </div>
+//   </div>
+// }
+
+
 api=(user)=>{
-  return !user?this.loginEl():
-  <div className="Api_calls">
 
-    <Button variant="contained" color="primary" className='menuBtn' onClick={this.getlog}> Get log</Button> <br/>
-    <Button variant="contained" color="primary" className='menuBtn' onClick={this.getallhistory}> Get All History</Button> <br/>
-    <input type='text' placeholder="room id" onChange={(event)=>this.setState({roomapi:event.target.value})}></input>
-    <Button variant="contained" color="primary" className='menuBtn' onClick={this.getroomhistory}> Get Room History</Button> 
-
-    <div className="apiResult">
-      {this.state.apiresult}
-    </div>
-  </div>
+  
+  return (!user?this.loginEl():<Admin></Admin>)
 }
+
 getroomhistory=()=>{
   if(this.state.roomapi){
     _conv.getroomhistory(this.state.roomapi)

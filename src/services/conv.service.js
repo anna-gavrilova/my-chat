@@ -48,6 +48,10 @@ class ConvService {
         return axios.post('http://127.0.0.1:3030/api/roomhistory',{room:room})
     }
 
+    getallrooms=()=>{
+        return axios.get('http://127.0.0.1:3030/api/rooms')
+    }
+
 
     
 

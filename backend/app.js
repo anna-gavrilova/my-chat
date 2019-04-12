@@ -60,7 +60,7 @@ mongoose.connect("mongodb://admin:admin1@ds255784.mlab.com:55784/my-chat")
                 result.map(el=>{
                     el.sender=el.sender.id
                 })
-                res.json(result)
+                res.json({data:result})
             }
         })
     })
@@ -88,10 +88,33 @@ mongoose.connect("mongodb://admin:admin1@ds255784.mlab.com:55784/my-chat")
                 res.json(err)
             }
             else{
-                res.json(log)
+                res.json({data:log})
             }
         })
 
+    })
+
+    app.get('/api/rooms',(req,res,next)=>{
+        Conversation.find().exec((err,convos)=>{
+
+            if(err){
+                res.json({success:false,data:err})
+            }
+            else{
+                console.log(convos[0].messageHistory[convos[0].messageHistory.length-1].time)
+                
+                res.json({data:convos.map(conv=>{
+                    data={}
+                    data.id=conv.id
+                    data.name=conv.name
+                    data.lastMessage=conv.messageHistory.length?conv.messageHistory[conv.messageHistory.length-1].time:"Empty"
+                    data['Date of Creation']=conv.dateOfCreation
+                    data['Participants']=conv.members[0].name+' '+conv.members[1].name
+                    return data
+                })})
+
+            }
+        })
     })
 
     module.exports=app;
